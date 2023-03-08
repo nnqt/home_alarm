@@ -10,6 +10,7 @@ import AlarmCard from './Alarm';
 import LightCard from './LightLed';
 import StatusCard from './Status';
 import DateCard from './DateCard';
+import HistoryTable from './HistoryTable';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
@@ -26,7 +27,7 @@ const Dashboard = () => {
                     container
                     spacing={gridSpacing}
                     sx={{
-                        mt: 1
+                        mt: 0
                     }}
                 >
                     <Grid item lg={3} md={6} sm={6} xs={12}>
@@ -44,13 +45,24 @@ const Dashboard = () => {
                 </Grid>
                 <Grid
                     container
+                    justifyContent="center"
                     spacing={gridSpacing}
                     sx={{
                         mt: 1
                     }}
-                    >
-                    <DateCard />
+                >
+                    <Grid item>
+                        <DateCard />
+                    </Grid>
                 </Grid>
+            </Grid>
+            <Grid 
+                item xs={12} 
+                sx={{
+                    mt: 2
+                }}
+            >
+                <HistoryTable/>
             </Grid>
         </Grid>
     );
