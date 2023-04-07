@@ -7,6 +7,8 @@ import { Box, Grid, Typography } from '@mui/material';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonDashboardCard from 'ui-component/cards/Skeleton/SkeletonDashboardCard';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 // assets
 
@@ -48,7 +50,17 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const StatusCard = ({ isLoading }) => {
+const StatusCard = ({ isLoading, statusDevice }) => {
+    const [device, setDevice] = useState("INACTIVE")
+    useEffect(() => {
+        if(statusDevice){
+            setDevice("ACTIVE")
+        }
+        else{
+            setDevice("INACTIVE")
+        }
+    })
+
     return (
         <>
             {isLoading ? (
@@ -68,7 +80,7 @@ const StatusCard = ({ isLoading }) => {
                                                 color: 'gray'
                                             }}
                                         >
-                                            STATUS
+                                            STATUS SYSTEM
                                         </Typography>
                                     </Grid>
                                 </Grid>
@@ -82,7 +94,7 @@ const StatusCard = ({ isLoading }) => {
                                         color: 'black'
                                     }}
                                 >
-                                    ACTIVE
+                                    {device}
                                 </Typography>
                             </Grid>
                         </Grid>

@@ -7,6 +7,8 @@ import { Box, Grid, Typography } from '@mui/material';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonDashboardCard from 'ui-component/cards/Skeleton/SkeletonDashboardCard';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 // assets
 
@@ -48,7 +50,20 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const AlarmCard = ({ isLoading }) => {
+const AlarmCard = ({ isLoading, buzzer }) => {
+    const [buzzerStatus, setBuzzerStatus] = useState("ERROR");
+    useEffect(() => {
+        if (buzzer == 0) {
+            setBuzzerStatus("OFF")
+        }
+        else if( buzzer > 0 && buzzer < 1024){
+            setBuzzerStatus("ON")
+        }
+        else {
+            setBuzzerStatus("ERROR")
+        }
+    })
+
     return (
         <>
             {isLoading ? (
@@ -82,7 +97,7 @@ const AlarmCard = ({ isLoading }) => {
                                         color: 'black'
                                     }}
                                 >
-                                    OFF
+                                    {buzzerStatus}
                                 </Typography>
                             </Grid>
                         </Grid>

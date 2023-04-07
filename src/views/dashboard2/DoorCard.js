@@ -7,6 +7,8 @@ import { Box, Grid, Typography } from '@mui/material';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonDashboardCard from 'ui-component/cards/Skeleton/SkeletonDashboardCard';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 // assets
 
@@ -48,7 +50,20 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
 
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const DoorCard = ({ isLoading }) => {
+const DoorCard = ({ isLoading, sensor }) => {
+    const [sensorStatus, setSensorStatus] = useState("ERROR")
+    useEffect(() => {
+        if(sensor == 0) {
+            setSensorStatus("CLOSED");
+        }
+        else if(sensor == 1) {
+            setSensorStatus("OPENED");
+        }
+        else {
+            setSensorStatus("ERROR")
+        }
+    }, [sensor])
+
     return (
         <>
             {isLoading ? (
@@ -82,7 +97,7 @@ const DoorCard = ({ isLoading }) => {
                                         color: 'black'
                                     }}
                                 >
-                                    CLOSED
+                                    {sensorStatus}
                                 </Typography>
                             </Grid>
                         </Grid>

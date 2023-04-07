@@ -7,10 +7,11 @@ import { Box, Grid, Typography } from '@mui/material';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 import SkeletonDashboardCard from 'ui-component/cards/Skeleton/SkeletonDashboardCard';
+import { useEffect } from 'react';
+import { useState } from 'react';
+import theme from 'themes';
 
 // assets
-
-
 const CardWrapper = styled(MainCard)(({ theme }) => ({
     backgroundColor: "white",
     overflow: 'hidden',
@@ -46,15 +47,32 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
     }
 }));
 
+
 // ===========================|| DASHBOARD DEFAULT - EARNING CARD ||=========================== //
 
-const LightCard = ({ isLoading }) => {
+const LightCard = ({ isLoading, led}) => {
+    const [ledStatus, setLedStatus] = useState("ERROR");
+    const [colorCard, setColorCard] = useState();
+    useEffect(()=>{
+        if (led == 1) {
+            setLedStatus("ON");
+            //setColorCard(theme.palette.error.light)
+        }
+        else if (led == 0) {
+            setLedStatus("OFF");
+            //setColorCard(theme.palette.primary.light)
+        }
+        else {
+            setLedStatus("ERROR")
+        }
+    },[led])
     return (
         <>
             {isLoading ? (
                 <SkeletonDashboardCard />
             ) : (
-                <CardWrapper border={false} content={false}>
+                <CardWrapper border={false} content={false}
+                >
                     <Box sx={{ p: 2.25 }}>
                         <Grid container direction="column">
                             <Grid item>
@@ -68,7 +86,7 @@ const LightCard = ({ isLoading }) => {
                                                 color: 'gray'
                                             }}
                                         >
-                                            LIGHTLED
+                                            LIGHT
                                         </Typography>
                                     </Grid>
                                 </Grid>
@@ -82,7 +100,7 @@ const LightCard = ({ isLoading }) => {
                                         color: 'black'
                                     }}
                                 >
-                                    OFF
+                                    {ledStatus}
                                 </Typography>
                             </Grid>
                         </Grid>
