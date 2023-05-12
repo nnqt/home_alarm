@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 // assets
 
 
-const CardWrapper = styled(MainCard)(({ theme }) => ({
+const RedCardWrapper = styled(MainCard)(({ theme }) => ({
     backgroundColor: "white",
     overflow: 'hidden',
     position: 'relative',
@@ -22,7 +22,7 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
         position: 'absolute',
         width: 210,
         height: 210,
-        background: theme.palette.secondary[800],
+        background: theme.palette.error.main,
         borderRadius: '50%',
         top: -85,
         right: -95,
@@ -36,7 +36,42 @@ const CardWrapper = styled(MainCard)(({ theme }) => ({
         position: 'absolute',
         width: 210,
         height: 210,
-        background: theme.palette.secondary[800],
+        background: theme.palette.error.main,
+        borderRadius: '50%',
+        top: -125,
+        right: -15,
+        opacity: 0.5,
+        [theme.breakpoints.down('sm')]: {
+            top: -155,
+            right: -70
+        }
+    }
+}));
+
+const GreenCardWrapper = styled(MainCard)(({ theme }) => ({
+    backgroundColor: "white",
+    overflow: 'hidden',
+    position: 'relative',
+    '&:after': {
+        content: '""',
+        position: 'absolute',
+        width: 210,
+        height: 210,
+        background: theme.palette.success.main,
+        borderRadius: '50%',
+        top: -85,
+        right: -95,
+        [theme.breakpoints.down('sm')]: {
+            top: -105,
+            right: -140
+        }
+    },
+    '&:before': {
+        content: '""',
+        position: 'absolute',
+        width: 210,
+        height: 210,
+        background: theme.palette.success.main,
         borderRadius: '50%',
         top: -125,
         right: -15,
@@ -64,48 +99,94 @@ const DoorCard = ({ isLoading, sensor }) => {
         }
     }, [sensor])
 
-    return (
-        <>
-            {isLoading ? (
-                <SkeletonDashboardCard />
-            ) : (
-                <CardWrapper border={false} content={false}>
-                    <Box sx={{ p: 2.25 }}>
-                        <Grid container direction="column" >
-                            <Grid item>
-                                <Grid container alignItems="center">
-                                    <Grid item>
-                                        <Typography 
-                                            sx={{ 
-                                                fontSize: '1.5rem', 
-                                                fontWeight: 500, 
-                                                mr: 1, mt: 1.75, mb: 0.75 ,
-                                                color: 'gray'
-                                            }}
-                                        >
-                                            DOOR
-                                        </Typography>
+
+    if(sensorStatus == "OPENED")
+        return (
+            <>
+                {isLoading ? (
+                    <SkeletonDashboardCard />
+                ) : (
+                    <RedCardWrapper border={false} content={false}>
+                        <Box sx={{ p: 2.25 }}>
+                            <Grid container direction="column" >
+                                <Grid item>
+                                    <Grid container alignItems="center">
+                                        <Grid item>
+                                            <Typography 
+                                                sx={{ 
+                                                    fontSize: '1.5rem', 
+                                                    fontWeight: 500, 
+                                                    mr: 1, mt: 1.75, mb: 0.75 ,
+                                                    color: 'black'
+                                                }}
+                                            >
+                                                DOOR
+                                            </Typography>
+                                        </Grid>
                                     </Grid>
                                 </Grid>
+                                <Grid item sx={{ mb: 1.25 }}>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '2rem',
+                                            fontWeight: 500,
+                                            mr: 1, mb: 5 ,
+                                            color: 'black'
+                                        }}
+                                    >
+                                        {sensorStatus}
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                            <Grid item sx={{ mb: 1.25 }}>
-                                <Typography
-                                    sx={{
-                                        fontSize: '2rem',
-                                        fontWeight: 500,
-                                        mr: 1, mb: 5 ,
-                                        color: 'black'
-                                    }}
-                                >
-                                    {sensorStatus}
-                                </Typography>
+                        </Box>
+                    </RedCardWrapper>
+                )}
+            </>
+        );
+    else {
+        return (
+            <>
+                {isLoading ? (
+                    <SkeletonDashboardCard />
+                ) : (
+                    <GreenCardWrapper border={false} content={false}>
+                        <Box sx={{ p: 2.25 }}>
+                            <Grid container direction="column" >
+                                <Grid item>
+                                    <Grid container alignItems="center">
+                                        <Grid item>
+                                            <Typography 
+                                                sx={{ 
+                                                    fontSize: '1.5rem', 
+                                                    fontWeight: 500, 
+                                                    mr: 1, mt: 1.75, mb: 0.75 ,
+                                                    color: 'black'
+                                                }}
+                                            >
+                                                DOOR
+                                            </Typography>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid item sx={{ mb: 1.25 }}>
+                                    <Typography
+                                        sx={{
+                                            fontSize: '2rem',
+                                            fontWeight: 500,
+                                            mr: 1, mb: 5 ,
+                                            color: 'black'
+                                        }}
+                                    >
+                                        {sensorStatus}
+                                    </Typography>
+                                </Grid>
                             </Grid>
-                        </Grid>
-                    </Box>
-                </CardWrapper>
-            )}
-        </>
-    );
+                        </Box>
+                    </GreenCardWrapper>
+                )}
+            </>
+        );
+    }
 };
 
 DoorCard.propTypes = {

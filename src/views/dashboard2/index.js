@@ -1,7 +1,8 @@
 import { Grid } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { gridSpacing } from 'store/constant';
-import api from '../../api/gets'
+//import api from '../../api/api'
+import apiWithToken from 'api/apiWithToken';
 
 // material-ui
 
@@ -12,25 +13,100 @@ import LightCard from './LightLed';
 import StatusCard from './Status';
 import DateCard from './DateCard';
 import HistoryTable from './HistoryTable';
+import { any } from 'prop-types';
 
 // ==============================|| DEFAULT DASHBOARD ||============================== //
 
 const Dashboard = () => {
     const [isLoading, setLoading] = useState(true);
-    const [statusDevice, setStatusDevice] = useState({"ledData": "", "buzzerData": "", "sensorData" : ""});
+    const [statusDevice, setStatusDevice] = useState({"led": "", "buzzer": "", "sensor" : ""});
     const [ledStatus, setLedStatus] = useState("")
     const [buzzerStatus, setBuzzerStatus] = useState("")
     const [sensorStatus, setSenSorStatus] = useState("")
+    const [systemStatus, setSystemStatus] = useState("")
 
     useEffect(() => {
         setLoading(false);
     }, []);
 
+    const fetchGets = async () => {
+        try {
+            const response = await apiWithToken.get('/status');
+            if(response?.data?.success){
+                console.log(response.data)
+                setStatusDevice(response.data.data);
+                setSystemStatus(response.data.signal);
+            }
+        } catch (err){
+            if(err.response){
+                console.log(err.response.data);
+                console.log(err.response.status);
+                console.log(err.response.headers);
+            }
+            else {
+                console.log(`Error: ${err.message}`);
+            }
+        }
+    }
     useEffect(() => {
-        const fetchGets = async () => {
+        fetchGets();
+    }, [])
+    
+    useEffect(() => {
+        setLedStatus(statusDevice.led)
+        setBuzzerStatus(statusDevice.buzzer)
+        setSenSorStatus(statusDevice.sensor)
+        setSystemStatus(systemStatus)
+    }, [statusDevice, systemStatus])
+    
+    const clickTurnOffAlarm = async () => {
+        try{
+            const response = await apiWithToken.post('/status/buzzer',{
+                "message": "0"
+            })
+            if(response?.data?.success){
+                setTimeout(() => fetchGets(), 500);
+                //fetchGets()
+            }
+        } catch (err){
+            if(err.response){
+                console.log(err.response.data);
+                console.log(err.response.status);
+                console.log(err.response.headers);
+            }
+            else {
+                console.log(`Error: ${err.message}`);
+            }
+        }
+    }
+
+    const clickButtonSystem = async () => {
+        try {
+            const response = await apiWithToken.get('/status/change')
+            if(response?.data?.success){
+                setTimeout(() => fetchGets(), 500)
+            }
+        } catch (err){
+            if(err.response){
+                console.log(err.response.data);
+                console.log(err.response.status);
+                console.log(err.response.headers);
+            }
+            else {
+                console.log(`Error: ${err.message}`);
+            }
+        }
+    }
+
+    const clickButtonLed = async () => {
+        if(statusDevice.led == 1){
             try {
-                const response = await api.get();
-                setStatusDevice(response.data);
+                const response = await apiWithToken.post('/status/led',{
+                    message: "0"
+                })
+                if(response?.data?.success){
+                    setTimeout(() => fetchGets(), 500)
+                }
             } catch (err){
                 if(err.response){
                     console.log(err.response.data);
@@ -42,15 +118,26 @@ const Dashboard = () => {
                 }
             }
         }
-        fetchGets();
-    }, [])
-    
-    useEffect(() => {
-        setLedStatus(statusDevice.ledData)
-        setBuzzerStatus(statusDevice.buzzerData)
-        setSenSorStatus(statusDevice.sensorData)
-    }, [statusDevice])
-    
+        else {
+            try {
+                const response = await apiWithToken.post('/status/led',{
+                    message: "1"
+                })
+                if(response?.data?.success){
+                    setTimeout(() => fetchGets(), 500)
+                }
+            } catch (err){
+                if(err.response){
+                    console.log(err.response.data);
+                    console.log(err.response.status);
+                    console.log(err.response.headers);
+                }
+                else {
+                    console.log(`Error: ${err.message}`);
+                }
+            }
+        }
+    }
 
     return (
         <Grid container spacing={gridSpacing}>
@@ -66,13 +153,13 @@ const Dashboard = () => {
                         <DoorCard isLoading={isLoading} sensor={sensorStatus} />
                     </Grid>
                     <Grid item lg={3} md={6} sm={6} xs={12}>
-                        <AlarmCard isLoading={isLoading} buzzer={buzzerStatus}/>
+                        <AlarmCard isLoading={isLoading} buzzer={buzzerStatus} handleClickTurnOff={clickTurnOffAlarm}/>
                     </Grid>
                     <Grid item lg={3} md={6} sm={6} xs={12}>
-                        <LightCard isLoading={isLoading} led={ledStatus}/>
+                        <LightCard isLoading={isLoading} led={ledStatus} handleClick={clickButtonLed}/>
                     </Grid>
                     <Grid item lg={3} md={6} sm={6} xs={12}>
-                        <StatusCard isLoading={isLoading} statusDevice={Boolean(sensorStatus || buzzerStatus || ledStatus)}/>
+                        <StatusCard isLoading={isLoading} statusDevice={systemStatus} handleClick={clickButtonSystem}/>
                     </Grid>
                 </Grid>
                 <Grid

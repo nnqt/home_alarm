@@ -21,6 +21,7 @@ const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
 const HistoryPage = Loadable(lazy(()=> import('views/history-page/HistoryPage')))
 const Profile = Loadable(lazy(()=>import('views/profile-page/Profile-page')))
+const Register = Loadable(lazy(()=>import('views/pages/authentication/authentication/Register')))
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -97,6 +98,10 @@ const MainRoutes = {
         {
             path: 'user/profile',
             element: <Profile/>
+        },
+        {
+            path: 'register',
+            element: <Register/>
         }
     ]
 };

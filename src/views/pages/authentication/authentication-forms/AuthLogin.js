@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -34,6 +34,8 @@ import { LOGIN } from 'store/actions';
 import { Navigate } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
+import api from 'api/api';
+
 // ============================|| FIREBASE - LOGIN ||============================ //
 
 const Login = ({ ...others }) => {
@@ -52,37 +54,48 @@ const Login = ({ ...others }) => {
         event.preventDefault();
     };
 
-    const handleClickSignIn = (event) => {
-        event.preventDefault();
-        dispatch({ type: LOGIN });
-        navigate("/dashboard");
-    };
+    const customization = useSelector((state) => state.customization)
+
+    const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/
 
     return (
         <>
-            {false && <Navigate to="/dashboard" replace={true} />}
+            {customization.authentication && <Navigate to="/dashboard" replace={true} />}
 
             <Formik
                 initialValues={{
-                    email: 'info@codedthemes.com',
+                    //email: 'info@codedthemes.com',
                     password: '123456',
+                    phone: '',
                     submit: null
                 }}
                 validationSchema={Yup.object().shape({
-                    email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-                    password: Yup.string().max(255).required('Password is required')
+                    //email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+                    password: Yup.string().max(255).required('Password is required'),
+                    phone: Yup.string().required('Phone is requied').matches(phoneRegExp, 'Phone number is not valid')
                 })}
                 onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
                     try {
+                        const response = await api.post('/login', 
+                            {
+                                phone: values.phone,
+                                password: values.password
+                            }
+                        ) 
                         if (scriptedRef.current) {
                             setStatus({ success: true });
                             setSubmitting(false);
+                        }
+                        if(response?.data?.success == true){
+                            localStorage.setItem('accessToken', response.data.accessToken)
+                            dispatch({ type: LOGIN })
+                            navigate("/dashboard");
                         }
                     } catch (err) {
                         console.error(err);
                         if (scriptedRef.current) {
                             setStatus({ success: false });
-                            setErrors({ submit: err.message });
+                            setErrors({ submit: err.response.data.message });
                             setSubmitting(false);
                         }
                     }
@@ -90,21 +103,21 @@ const Login = ({ ...others }) => {
             >
                 {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
                     <form noValidate onSubmit={handleSubmit} {...others}>
-                        <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-                            <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+                        <FormControl fullWidth error={Boolean(touched.phone && errors.phone)} sx={{ ...theme.typography.customInput }}>
+                            <InputLabel htmlFor="outlined-adornment-phone-login">Phone</InputLabel>
                             <OutlinedInput
-                                id="outlined-adornment-email-login"
-                                type="email"
-                                value={values.email}
-                                name="email"
+                                id="outlined-adornment-phone-login"
+                                type="text"
+                                value={values.phone}
+                                name="phone"
                                 onBlur={handleBlur}
                                 onChange={handleChange}
-                                label="Email Address / Username"
+                                label="Phone"
                                 inputProps={{}}
                             />
-                            {touched.email && errors.email && (
-                                <FormHelperText error id="standard-weight-helper-text-email-login">
-                                    {errors.email}
+                            {touched.phone && errors.phone && (
+                                <FormHelperText error id="standard-weight-helper-text-phone-login">
+                                    {errors.phone}
                                 </FormHelperText>
                             )}
                         </FormControl>
@@ -176,7 +189,6 @@ const Login = ({ ...others }) => {
                                     type="submit"
                                     variant="contained"
                                     color="secondary"
-                                    onClick={handleClickSignIn}
                                 >
                                     Sign in
                                 </Button>

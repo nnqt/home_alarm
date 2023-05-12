@@ -16,6 +16,9 @@ import KeyboardArrowLeft from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRight from '@mui/icons-material/KeyboardArrowRight';
 import LastPageIcon from '@mui/icons-material/LastPage';
 import TableHead from '@mui/material/TableHead';
+import apiWithToken from 'api/apiWithToken';
+import { useEffect } from 'react';
+import { useState } from 'react';
 
 function TablePaginationActions(props) {
   const theme = useTheme();
@@ -129,14 +132,12 @@ export default function HistoryTable() {
             <TableCell></TableCell>
             <TableCell></TableCell>
             <TableCell></TableCell>
-            <TableCell></TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Safety warning</TableCell>
-            <TableCell align="right">Status</TableCell>
-            <TableCell align="right">Hour</TableCell>
-            <TableCell align="right">Month</TableCell>
-            <TableCell align="right">Year</TableCell>
+            <TableCell>System Alarm</TableCell>
+            <TableCell align="right">Door Status</TableCell>
+            <TableCell align="right">Date</TableCell>
+            <TableCell align="right">Time</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
